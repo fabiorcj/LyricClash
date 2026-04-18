@@ -8,6 +8,18 @@ export default function ResultScreen() {
   // Pegamos o placar real enviado pela GameArena
   const scoreboard = location.state?.scoreboard || [];
   
+  // Identificadores para retorno à sala
+  const roomId = location.state?.roomId;
+  const username = location.state?.username;
+
+  const handleBackToRoom = () => {
+    if (roomId && username) {
+      navigate(`/room/${roomId}/${username}`);
+    } else {
+      navigate('/');
+    }
+  };
+
   // Identificamos os 3 primeiros colocados
   const first = scoreboard[0] || { username: 'Vazio', score: 0 };
   const second = scoreboard[1] || { username: 'Vazio', score: 0 };
@@ -105,11 +117,11 @@ export default function ResultScreen() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5 }}
-        onClick={() => navigate('/')}
+        onClick={handleBackToRoom}
         className="px-12 py-5 rounded-2xl font-black text-white bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 active:scale-95 transition-all tracking-[0.2em] text-sm hover:shadow-[0_0_30px_rgba(255,255,255,0.1)] group overflow-hidden relative"
       >
         <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-        VOLTAR AO LOBBY
+        {roomId ? "VOLTAR PARA A SALA" : "VOLTAR AO LOBBY"}
       </motion.button>
 
     </div>

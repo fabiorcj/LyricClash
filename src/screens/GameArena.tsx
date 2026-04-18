@@ -307,8 +307,13 @@ export default function GameArena() {
   useEffect(() => {
     if (gameState === "success") {
       const timer = setTimeout(() => {
-        console.log("🏆 Navegando para resultados com placar:", sortedPlayers);
-        navigate("/results", { state: { scoreboard: sortedPlayers } });
+        navigate("/results", { 
+          state: { 
+            scoreboard: sortedPlayers,
+            roomId,
+            username
+          } 
+        });
       }, 4000);
       return () => clearTimeout(timer);
     }
