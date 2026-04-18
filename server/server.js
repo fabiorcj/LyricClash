@@ -28,7 +28,8 @@ io.on('connection', (socket) => {
         players: {}, 
         gameState: 'waiting',
         difficulty: difficulty || 'medium',
-        selectedSong: null
+        selectedSong: null,
+        votesToRepeat: [] // Rastrear sockets que votaram para repetir
       };
     }
     
@@ -132,6 +133,7 @@ io.on('connection', (socket) => {
         // Resetar sinalizadores para o próximo verso
         playersArray.forEach(p => p.hasSubmittedCurrentVerse = false);
         
+        room.votesToRepeat = []; // Resetar votos para o novo verso
         console.log(`🎤 [${roomId}] Todos submeteram o verso! Disparando revelação global.`);
         io.to(roomId).emit('start_reveal_phase');
       }
@@ -142,6 +144,29 @@ io.on('connection', (socket) => {
         difficulty: room.difficulty,
         selectedSong: room.selectedSong
       });
+    }
+  });
+
+  socket.on('vote_repeat_segment', ({ roomId }) => {
+    const room = rooms[roomId];
+    if (room && room.players[socket.id]) {
+      if (!room.votesToRepeat.includes(socket.id)) {
+        room.votesToRepeat.push(socket.id);
+      }
+
+      const totalPlayers = Object.keys(room.players).length;
+      const currentVotes = room.votesToRepeat.length;
+
+      console.log(`🔁 [${roomId}] Voto para repetir: ${currentVotes}/${totalPlayers}`);
+
+      if (currentVotes >= totalPlayers) {
+        room.votesToRepeat = []; // Resetar após concordância
+        io.to(roomId).emit('execute_repeat_verse');
+        console.log(`🔥 [${roomId}] Consenso atingido! Repetindo verso.`);
+      } else {
+        // Enviar atualização do progresso da votação (opcional, pode ser via room_state_update)
+        io.to(roomId).emit('repeat_vote_update', { currentVotes, totalPlayers });
+      }
     }
   });
 

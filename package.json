@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "ingest": "node scripts/addSong.js",
-    "auto-ingest": "node scripts/autoIngest.js"
+    "auto-ingest": "node scripts/autoIngest.js",
+    "ai-sync": "python scripts/ai_sync.py"
   },
   "dependencies": {
     "framer-motion": "^12.38.0",
