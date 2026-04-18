@@ -276,6 +276,15 @@ export default function GameArena() {
     setGameState("waiting_for_others");
   };
 
+  const sortedPlayers = Object.values(liveScoreboard).sort(
+    (a: any, b: any) => b.score - a.score,
+  );
+  const currentPlayer = Object.values(liveScoreboard).find(
+    (p: any) => p.username === username,
+  ) as any;
+  const isHost = currentPlayer?.isHost;
+  const amIReady = currentPlayer?.isReady;
+
   // Efeito para avançar após a revelação (somente quando entrar em revealing)
   useEffect(() => {
     if (gameState === "revealing") {
@@ -288,23 +297,23 @@ export default function GameArena() {
         } else {
           setGameState("success");
           player?.playVideo();
-          setTimeout(() => {
-            navigate("/results");
-          }, 4000);
         }
       }, 4500);
       return () => clearTimeout(timer);
     }
-  }, [gameState, currentLineIndex, player, songLyrics.length, navigate]);
+  }, [gameState, currentLineIndex, player, songLyrics.length]);
 
-  const sortedPlayers = Object.values(liveScoreboard).sort(
-    (a: any, b: any) => b.score - a.score,
-  );
-  const currentPlayer = Object.values(liveScoreboard).find(
-    (p: any) => p.username === username,
-  ) as any;
-  const isHost = currentPlayer?.isHost;
-  const amIReady = currentPlayer?.isReady;
+  // Novo Efeito Robusto para o Fim de Jogo
+  useEffect(() => {
+    if (gameState === "success") {
+      const timer = setTimeout(() => {
+        console.log("🏆 Navegando para resultados com placar:", sortedPlayers);
+        navigate("/results", { state: { scoreboard: sortedPlayers } });
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [gameState, sortedPlayers, navigate]);
+
 
   return (
     <div className="relative flex flex-col w-full max-w-[1400px] mx-auto h-[95vh] sm:h-[90vh] bg-[#050505] rounded-none sm:rounded-[40px] overflow-hidden border-0 sm:border border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.8)] transition-all duration-500 sm:my-auto ring-0 sm:ring-1 ring-white/5">

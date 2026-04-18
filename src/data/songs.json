@@ -1228,5 +1228,43 @@
         "text": "All the way"
       }
     ]
+  },
+  "M-mtdN6R3bQ": {
+    "title": "Short Song",
+    "artist": "test",
+    "lyrics": [
+      {
+        "time": 0.0,
+        "text": "It's this night is not forever"
+      },
+      {
+        "time": 4.0,
+        "text": "At least we are together"
+      },
+      {
+        "time": 6.0,
+        "text": "I know I'm not alone"
+      },
+      {
+        "time": 8.0,
+        "text": "I know I'm not alone"
+      },
+      {
+        "time": 10.0,
+        "text": "Anywhere we're together"
+      },
+      {
+        "time": 14.0,
+        "text": "We're far from still together"
+      },
+      {
+        "time": 16.0,
+        "text": "I know I'm not alone"
+      },
+      {
+        "time": 18.0,
+        "text": "I know I'm not alone"
+      }
+    ]
   }
 }
