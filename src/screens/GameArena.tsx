@@ -78,9 +78,12 @@ export default function GameArena() {
         setGameState("revealing");
       });
 
-      socketManager.socket?.on("repeat_vote_update", ({ currentVotes, totalPlayers }) => {
-        setRepeatVotes({ current: currentVotes, total: totalPlayers });
-      });
+      socketManager.socket?.on(
+        "repeat_vote_update",
+        ({ currentVotes, totalPlayers }) => {
+          setRepeatVotes({ current: currentVotes, total: totalPlayers });
+        },
+      );
     }, 300);
 
     return () => {
@@ -97,15 +100,17 @@ export default function GameArena() {
   useEffect(() => {
     const handleExecuteRepeat = () => {
       if (!player) return;
-      
+
       const startTime = songLyrics[currentLineIndex]?.time || 0;
       const globalOffset = songData.offset || 0;
-      
-      console.log(`🎬 Repetindo verso: Voltando para ${startTime + globalOffset}s`);
-      
+
+      console.log(
+        `🎬 Repetindo verso: Voltando para ${startTime + globalOffset}s`,
+      );
+
       player.seekTo(Math.max(0, startTime + globalOffset), true);
       player.playVideo();
-      
+
       setGapInputs({});
       setHasVotedRepeat(false);
       setRepeatVotes({ current: 0, total: 0 });
@@ -153,7 +158,7 @@ export default function GameArena() {
           targetTime = songLyrics[currentLineIndex].time + globalOffset + 4.0;
         }
 
-        if (currentTime >= targetTime + 0.15) {
+        if (currentTime >= targetTime + 0) {
           player.pauseVideo();
           setGapInputs({});
           setGameState("typing");
@@ -167,7 +172,7 @@ export default function GameArena() {
   const getProcessedWords = () => {
     // Garante no mínimo 1 gap, a menos que a frase seja vazia ou sem música
     if (!songLyrics[currentLineIndex]) return [];
-    
+
     const words = songLyrics[currentLineIndex].text.split(/\s+/);
 
     let gapRatio = 0.2;
@@ -307,18 +312,17 @@ export default function GameArena() {
   useEffect(() => {
     if (gameState === "success") {
       const timer = setTimeout(() => {
-        navigate("/results", { 
-          state: { 
+        navigate("/results", {
+          state: {
             scoreboard: sortedPlayers,
             roomId,
-            username
-          } 
+            username,
+          },
         });
       }, 4000);
       return () => clearTimeout(timer);
     }
   }, [gameState, sortedPlayers, navigate]);
-
 
   return (
     <div className="relative flex flex-col w-full max-w-[1400px] mx-auto h-[95vh] sm:h-[90vh] bg-[#050505] rounded-none sm:rounded-[40px] overflow-hidden border-0 sm:border border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.8)] transition-all duration-500 sm:my-auto ring-0 sm:ring-1 ring-white/5">
@@ -340,7 +344,9 @@ export default function GameArena() {
           }}
           onReady={onPlayerReady}
           onError={() => {
-            setVideoError("O YouTube não permitiu carregar este vídeo (pode ser restrito ou excluído).");
+            setVideoError(
+              "O YouTube não permitiu carregar este vídeo (pode ser restrito ou excluído).",
+            );
           }}
           iframeClassName="w-full h-full absolute inset-0 object-cover scale-[1.5] opacity-40 mix-blend-screen filter contrast-125 saturate-150"
           className="w-full h-full pointer-events-none"
@@ -349,9 +355,11 @@ export default function GameArena() {
         {videoError && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/90 z-50 p-8 text-center">
             <div className="text-red-500 text-5xl mb-6">⚠️</div>
-            <h2 className="text-white text-2xl font-black mb-4 uppercase">Erro de Carregamento</h2>
+            <h2 className="text-white text-2xl font-black mb-4 uppercase">
+              Erro de Carregamento
+            </h2>
             <p className="text-gray-400 mb-8 max-w-md">{videoError}</p>
-            <button 
+            <button
               onClick={handleLeave}
               className="px-8 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-bold transition-all border border-white/10"
             >
@@ -599,8 +607,8 @@ export default function GameArena() {
                   setHasVotedRepeat(true);
                 }}
                 className={`px-10 py-5 rounded-2xl font-black transition-all border flex items-center justify-center gap-3 text-xs tracking-[0.2em] uppercase ${
-                  hasVotedRepeat 
-                    ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400 opacity-60" 
+                  hasVotedRepeat
+                    ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400 opacity-60"
                     : "bg-white/5 border-white/10 text-gray-400 hover:bg-white/10 active:scale-95"
                 }`}
                 title="Pede para repetir o áudio do verso atual"
@@ -641,12 +649,14 @@ export default function GameArena() {
                   setHasVotedRepeat(true);
                 }}
                 className={`px-8 py-3 rounded-xl font-bold transition-all border flex items-center gap-3 ${
-                  hasVotedRepeat 
-                    ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400 opacity-60 cursor-not-allowed" 
+                  hasVotedRepeat
+                    ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400 opacity-60 cursor-not-allowed"
                     : "bg-white/5 border-white/10 text-white hover:bg-white/10 active:scale-95"
                 }`}
               >
-                <span>{hasVotedRepeat ? "✅ VOTO REGISTRADO" : "🔁 REPETIR VERSO"}</span>
+                <span>
+                  {hasVotedRepeat ? "✅ VOTO REGISTRADO" : "🔁 REPETIR VERSO"}
+                </span>
                 {repeatVotes.total > 0 && (
                   <span className="bg-black/40 px-2 py-0.5 rounded-md text-xs">
                     {repeatVotes.current}/{repeatVotes.total}
